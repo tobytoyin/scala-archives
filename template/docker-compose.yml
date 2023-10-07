@@ -1,0 +1,19 @@
+services:
+  app:
+    container_name: app
+    init: true
+    volumes:
+    - ./:/working
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+    working_dir: /working
+
+    build:
+      context: .
+      dockerfile: dockerfile.yml
+      args: 
+        - SCALA_INSTALL_URL=https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-pc-linux.gz
+
+    tty: true
+    stdin_open: true

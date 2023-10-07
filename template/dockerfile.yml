@@ -1,0 +1,24 @@
+FROM ubuntu:latest
+
+ARG SCALA_INSTALL_URL=https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-pc-linux.gz
+
+
+# setup linux & pythonX version
+ENV DEBIAN_FRONTEND=noninteractive 
+# use bash not sh
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get install -y software-properties-common
+RUN apt-get install -y curl
+
+# install scala (https://www.scala-lang.org/download/)
+RUN apt-get install -y default-jdk
+RUN curl -fL ${SCALA_INSTALL_URL} | gzip -d > cs && chmod +x cs && ./cs setup -y
+
+# dockerfile seems to be only recognise .bashrc but not profile
+RUN echo 'export PATH=/root/.local/share/coursier/bin/:$PATH' >> ~/.bashrc
+
+# move contents
+WORKDIR /working
+COPY . /working
